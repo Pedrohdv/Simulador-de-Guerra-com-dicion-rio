@@ -5,7 +5,7 @@ atributos_unidades = {
                "agilidade": 1, "distancia_preferida": "perto"},
     "unit_2": {"classe": "galinha", "vida": 50, "vidamax": 50, "ataque": 10, "defesa": 20,
                "agilidade": 8, "distancia_preferida": "perto"},
-    "unit_3": {"classe": "arqueiro", "vida": 150, "vidamax": 150, "ataque": 100, "defesa": 40,
+    "unit_3": {"classe": "arqueiro", "vida": 200, "vidamax": 200, "ataque": 100, "defesa": 40,
                "agilidade": 5, "distancia_preferida": "longe"},
     "unit_4": {"classe": "lobo", "vida": 250, "vidamax": 250, "ataque": 75, "defesa": 50,
                "agilidade": 7, "distancia_preferida": "perto"},
