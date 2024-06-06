@@ -2,24 +2,24 @@ from random import *
 
 atributos_unidades = {
     "unit_1": {"classe": "dinossauro", "vida": 500, "vidamax": 500, "ataque": 200, "defesa": 100,
-               "agilidade": 1, "distancia_preferida": "perto"},
+               "agilidade": 0.1, "distancia_preferida": "perto"},
     "unit_2": {"classe": "galinha", "vida": 50, "vidamax": 50, "ataque": 10, "defesa": 20,
-               "agilidade": 8, "distancia_preferida": "perto"},
-    "unit_3": {"classe": "arqueiro", "vida": 200, "vidamax": 200, "ataque": 100, "defesa": 40,
-               "agilidade": 5, "distancia_preferida": "longe"},
-    "unit_4": {"classe": "lobo", "vida": 250, "vidamax": 250, "ataque": 75, "defesa": 50,
-               "agilidade": 7, "distancia_preferida": "perto"},
-    "unit_5": {"classe": "águia", "vida": 100, "vidamax": 100, "ataque": 100, "defesa": 30,
-               "agilidade": 10, "distancia_preferida": "perto"},
-    "unit_6": {"classe": "estilingue", "vida": 200, "vidamax": 200, "ataque": 50, "defesa": 30,
-               "agilidade": 7, "distancia_preferida": "longe"}
+               "agilidade": 0.4, "distancia_preferida": "perto"},
+    "3": {"classe": "arqueiro", "vida": 200, "vidamax": 200, "ataque": 100, "defesa": 40,
+               "agilidade": 0.25, "distancia_preferida": "longe"},
+    "4": {"classe": "lobo", "vida": 250, "vidamax": 250, "ataque": 75, "defesa": 50,
+               "agilidade":0.35, "distancia_preferida": "perto"},
+    "5": {"classe": "águia", "vida": 100, "vidamax": 100, "ataque": 100, "defesa": 30,
+               "agilidade": 0.5, "distancia_preferida": "perto"},
+    "unit_6": {"classe": "hobbit", "vida": 200, "vidamax": 200, "ataque": 50, "defesa": 30,
+               "agilidade":0.35, "distancia_preferida": "longe"}
 }
 
 vantagens_de_classe = {
     "águia": {"dinossauro": 1.2, "lobo": 1.2},
     "arqueiro": {"águia": 1.2, "galinha": 1.2},
-    "estilingue": {"águia": 1.2, "galinha": 1.2},
-    "lobo": {"arqueiro": 1.2, "estilingue": 1.2}
+    "hobbit": {"águia": 1.2, "galinha": 1.2},
+    "lobo": {"arqueiro": 1.2, "hobbit": 1.2}
 }
 
 vantagens_de_terreno = {
@@ -54,3 +54,12 @@ def calculo_multiplicador_distancia(atacante, alvo):
         return 1.2
     else:
         return 0.8
+
+def confronto(atacante,alvo,vantagem_terreno):
+    vantagem_classe = 1
+    if atributos_unidades[atacante]["classe"] in vantagens_de_classe and atributos_unidades[alvo]["classe"] in vantagens_de_classe[atributos_unidades[atacante]["classe"]]:
+        vantagem_classe = vantagens_de_classe[atributos_unidades[atacante]["classe"]][atributos_unidades[alvo]["classe"]]
+    multiplicador_distancia = calculo_multiplicador_distancia(atacante, alvo)
+    dano = calculo_ataque(atacante, alvo, vantagem_terreno, vantagem_classe, multiplicador_distancia)
+    defesa = calculo_defesa(atacante, alvo, vantagem_terreno, vantagem_classe, multiplicador_distancia)
+
