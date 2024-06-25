@@ -1,9 +1,8 @@
 import random
 
-
 atributos_unidades = {
     "unit_1": {"classe": "dinossauro", "vida": 500, "vidamax": 500, "ataque": 200, "defesa": 50,
-               "agilidade": -1, "distancia_preferida": "perto"},
+               "agilidade": 1, "distancia_preferida": "perto"},
     "unit_2": {"classe": "galinha", "vida": 50, "vidamax": 50, "ataque": 10, "defesa": 10,
                "agilidade": 8, "distancia_preferida": "perto"},
     "unit_3": {"classe": "arqueiro", "vida": 200, "vidamax": 200, "ataque": 100, "defesa": 20,
@@ -52,7 +51,7 @@ def calculo_multiplicador_distancia(atacante, alvo):
     if distancia_atacante == distancia_alvo:
         return 1
     elif ((distancia_atacante == "perto" and atacante["vida"] == atacante["vidamax"])
-    or (distancia_atacante == "longe" and alvo["vida"] != alvo["vidamax"])):
+          or (distancia_atacante == "longe" and alvo["vida"] != alvo["vidamax"])):
         return 1.2
     else:
         return 0.8
@@ -78,7 +77,7 @@ def luta(atacante, alvo, vantagem_terreno, esquiva):
 
     alvo["vida"] -= dano_rec
 
-    return alvo["vida"] <= 0
+    return alvo["vida"] <= 0.0
 
 
 a1 = int(input("quant ex1 dino:"))
@@ -115,37 +114,53 @@ EX_2 = {
 }
 
 
-def confronto(atacante, atqex, alvo, alvoex, vantagem_terreno, esquiva):
-    result = luta(atacante, alvo, vantagem_terreno, esquiva)
+def confronto(b, atqex, atqexin, a, alvoex, alvoexin, vantagem_terreno, esquiva):
+    result = luta(b, a, vantagem_terreno, esquiva)
     if result:
-        alvoex[alvo["classe"]]["quant"] = alvoex[alvo["classe"]]["quant"] - 1
+        alvoex[a["classe"]]["quant"] -= 1
+        alvoexin[a["classe"]] = alvoex[a["classe"]]["atr"]
+        a = alvoexin[a["classe"]]
     else:
-        confronto(alvo,alvoex,atacante,atqex,vantagem_terreno, e)
+        confronto(a, alvoex, alvoexin, b, atqex, atqexin, vantagem_terreno, e)
+
+
+ex1in = dict()
+ex2in = dict()
 
 while True:
-    atacante = random.choice(list(EX_1.values()))["atr"]
-    atqex = EX_1
-    alvo = random.choice(list(EX_2.values()))["atr"]
-    alvoex = EX_2
+    atacante = random.choice(list(EX_1.keys()))
+    alvo = random.choice(list(EX_2.keys()))
 
-    e = random.randint(20,30)
+    if atacante in ex1in:
+        atacante = ex1in[atacante]
+    else:
+        ex1in[atacante] = EX_1[atacante]["atr"]
+        atacante = ex1in[atacante]
 
-    confronto(atacante, atqex, alvo, alvoex, 1, e)
+    if alvo in ex2in:
+        alvo = ex2in[alvo]
+    else:
+        ex2in[alvo] = EX_2[alvo]["atr"]
+        alvo = ex2in[alvo]
 
-    if atqex[atacante["classe"]]["quant"] <= 0:
-        del atqex[atacante["classe"]]
+    e = random.randint(20, 30)
 
-    if alvoex[alvo["classe"]]["quant"] <= 0:
-        del alvoex[alvo["classe"]]
-    print(EX_1)
-    print(EX_2)
-    if atqex == {}:
+    confronto(atacante, EX_1, ex1in, alvo, EX_2, ex2in, 1, e)
+
+    if EX_1[atacante["classe"]]["quant"] <= 0:
+        EX_1.pop(atacante["classe"])
+
+    if EX_2[alvo["classe"]]["quant"] <= 0:
+        EX_2.pop(alvo["classe"])
+    print(ex1in)
+    print(ex2in)
+    if EX_1 == {}:
         print("EXERCITO DOIS DEU GREMIO")
         break
 
-    if alvoex == {}:
+    if EX_2 == {}:
         print("EXERCITO UM DEU GREMIO")
         break
 
-
-print(EX_1, EX_2)
+print(ex1in)
+print(ex2in)
