@@ -169,18 +169,17 @@ while True:
         break
 
 
+
 print("No ex1 sobraram:")
-print(EX_1["dinossauro"]["quant"], "dinossauros")
-print(EX_1["galinha"]["quant"], "galinhas")
-print(EX_1["arqueiro"]["quant"], "arqueiros")
-print(EX_1["lobo"]["quant"], "lobos")
-print(EX_1["águia"]["quant"], "águias")
-print(EX_1["estilingue"]["quant"], "estilingues")
+for d in atributos_unidades.values():
+    if d["classe"] not in EX_1:
+        print(0, d["classe"]+"s")
+    else:
+        print(EX_1[d["classe"]]["quant"], d["classe"]+"s")
 
 print("No ex2 sobraram:")
-print(EX_2["dinossauro"]["quant"], "dinossauros")
-print(EX_2["galinha"]["quant"], "galinhas")
-print(EX_2["arqueiro"]["quant"], "arqueiros")
-print(EX_2["lobo"]["quant"], "lobos")
-print(EX_2["águia"]["quant"], "águias")
-print(EX_2["estilingue"]["quant"], "estilingues")
+for d in atributos_unidades.values():
+    if d["classe"] not in EX_2:
+        print(0, d["classe"]+"s")
+    else:
+        print(EX_2[d["classe"]]["quant"], d["classe"]+"s")
