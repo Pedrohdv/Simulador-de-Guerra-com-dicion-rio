@@ -1,4 +1,5 @@
 import random
+import copy
 
 atributos_unidades = {
     "unit_1": {"classe": "dinossauro", "vida": 500, "vidamax": 500, "ataque": 200, "defesa": 50,
@@ -58,8 +59,6 @@ def calculo_multiplicador_distancia(atacante, alvo):
 
 
 def luta(atacante, alvo, vantagem_terreno, esquiva):
-    if esquiva <= alvo["agilidade"]:
-        return False
 
     mutiplicador_distancia = calculo_multiplicador_distancia(atacante, alvo)
 
@@ -72,7 +71,9 @@ def luta(atacante, alvo, vantagem_terreno, esquiva):
 
     dano_rec = dano_atq - defesa
 
-    if dano_rec < 0:
+    if esquiva < alvo["agilidade"] and dano_rec > alvo["vidamax"]/2:
+        dano_rec = alvo["vidamax"]/2
+    if dano_rec < 1:
         dano_rec = 0
 
     alvo["vida"] -= dano_rec
@@ -118,8 +119,7 @@ def confronto(b, atqex, atqexin, a, alvoex, alvoexin, vantagem_terreno, esquiva)
     result = luta(b, a, vantagem_terreno, esquiva)
     if result:
         alvoex[a["classe"]]["quant"] -= 1
-        alvoexin[a["classe"]] = alvoex[a["classe"]]["atr"]
-        a = alvoexin[a["classe"]]
+        alvoexin.pop(a["classe"])
     else:
         confronto(a, alvoex, alvoexin, b, atqex, atqexin, vantagem_terreno, e)
 
@@ -134,26 +134,29 @@ while True:
     if atacante in ex1in:
         atacante = ex1in[atacante]
     else:
-        ex1in[atacante] = EX_1[atacante]["atr"]
+        ex1in[atacante] = copy.deepcopy(EX_1[atacante]["atr"])
         atacante = ex1in[atacante]
 
     if alvo in ex2in:
         alvo = ex2in[alvo]
     else:
-        ex2in[alvo] = EX_2[alvo]["atr"]
+        ex2in[alvo] = copy.deepcopy(EX_2[alvo]["atr"])
         alvo = ex2in[alvo]
 
-    e = random.randint(20, 30)
+    e = random.randint(0, 30)
 
-    confronto(atacante, EX_1, ex1in, alvo, EX_2, ex2in, 1, e)
+    co = random.randint(0, 1)
+
+    if co == 1:
+        confronto(atacante, EX_1, ex1in, alvo, EX_2, ex2in, 1, e)
+    else:
+        confronto(alvo, EX_2, ex2in, atacante, EX_1, ex1in, 1, e)
 
     if EX_1[atacante["classe"]]["quant"] <= 0:
         EX_1.pop(atacante["classe"])
 
     if EX_2[alvo["classe"]]["quant"] <= 0:
         EX_2.pop(alvo["classe"])
-    print(ex1in)
-    print(ex2in)
     if EX_1 == {}:
         print("EXERCITO DOIS DEU GREMIO")
         break
@@ -162,5 +165,4 @@ while True:
         print("EXERCITO UM DEU GREMIO")
         break
 
-print(ex1in)
-print(ex2in)
+
