@@ -1,10 +1,13 @@
 import random
 import copy
+import sys
+
+sys.setrecursionlimit(10**6*2)
 
 atributos_unidades = {
-    "unit_1": {"classe": "dinossauro", "vida": 500, "vidamax": 500, "ataque": 200, "defesa": 50,
+    "unit_1": {"classe": "dinossauro", "vida": 500, "vidamax": 500, "ataque": 200, "defesa": 45,
                "agilidade": 1, "distancia_preferida": "perto"},
-    "unit_2": {"classe": "galinha", "vida": 50, "vidamax": 50, "ataque": 10, "defesa": 10,
+    "unit_2": {"classe": "galinha", "vida": 50, "vidamax": 50, "ataque": 5, "defesa": 10,
                "agilidade": 8, "distancia_preferida": "perto"},
     "unit_3": {"classe": "arqueiro", "vida": 200, "vidamax": 200, "ataque": 100, "defesa": 20,
                "agilidade": 6, "distancia_preferida": "longe"},
@@ -12,7 +15,7 @@ atributos_unidades = {
                "agilidade": 7, "distancia_preferida": "perto"},
     "unit_5": {"classe": "águia", "vida": 100, "vidamax": 100, "ataque": 100, "defesa": 15,
                "agilidade": 10, "distancia_preferida": "perto"},
-    "unit_6": {"classe": "estilingue", "vida": 200, "vidamax": 200, "ataque": 50, "defesa": 15,
+    "unit_6": {"classe": "estilingue", "vida": 200, "vidamax": 200, "ataque": 75, "defesa": 15,
                "agilidade": 7, "distancia_preferida": "longe"}
 }
 
@@ -21,11 +24,6 @@ vantagens_de_classe = {
     "arqueiro": {"águia": 1.2, "galinha": 1.2},
     "estilingue": {"águia": 1.2, "galinha": 1.2},
     "lobo": {"arqueiro": 1.2, "estilingue": 1.2}
-}
-
-vantagens_de_terreno = {
-    "vantagem_de_altura": {"ataque": 1.2, "defesa": 1.2},
-    "desvantagem_de_altura": {"ataque": 0.8, "defesa": 0.8}
 }
 
 
@@ -58,7 +56,7 @@ def calculo_multiplicador_distancia(atacante, alvo):
         return 0.8
 
 
-def luta(atacante, alvo, vantagem_terreno, esquiva):
+def luta(atacante, alvo, vantagem_terreno_atq, vantagem_terreno_def, esquiva):
 
     mutiplicador_distancia = calculo_multiplicador_distancia(atacante, alvo)
 
@@ -66,10 +64,13 @@ def luta(atacante, alvo, vantagem_terreno, esquiva):
     if atacante["classe"] in vantagens_de_classe and alvo["classe"] in vantagens_de_classe[atacante["classe"]]:
         vantagem_classe = vantagens_de_classe[atacante["classe"]][alvo["classe"]]
 
-    dano_atq = calculo_ataque(atacante, alvo, vantagem_terreno, vantagem_classe, mutiplicador_distancia)
-    defesa = calculo_defesa(alvo, atacante, vantagem_terreno, vantagem_classe, mutiplicador_distancia)
+    dano_atq = calculo_ataque(atacante, alvo, vantagem_terreno_atq, vantagem_classe, mutiplicador_distancia)
+    defesa = calculo_defesa(alvo, atacante, vantagem_terreno_def, vantagem_classe, mutiplicador_distancia)
 
-    dano_rec = dano_atq - defesa
+    if atacante["classe"] != "galinha":
+        dano_rec = dano_atq - defesa
+    else:
+        dano_rec = dano_atq
 
     if esquiva < alvo["agilidade"] and dano_rec > alvo["vidamax"]/2:
         dano_rec = alvo["vidamax"]/2
@@ -115,13 +116,13 @@ EX_2 = {
 }
 
 
-def confronto(b, atqex, atqexin, a, alvoex, alvoexin, vantagem_terreno, esquiva):
-    result = luta(b, a, vantagem_terreno, esquiva)
+def confronto(b, atqex, atqexin, a, alvoex, alvoexin, vantagem_terreno_atq, vantagem_terreno_def, esquiva):
+    result = luta(b, a, vantagem_terreno_atq, vantagem_terreno_def, esquiva)
     if result:
         alvoex[a["classe"]]["quant"] -= 1
         alvoexin.pop(a["classe"])
     else:
-        confronto(a, alvoex, alvoexin, b, atqex, atqexin, vantagem_terreno, e)
+        confronto(a, alvoex, alvoexin, b, atqex, atqexin, vantagem_terreno_atq, vantagem_terreno_def, esquiva)
 
 
 ex1in = dict()
@@ -144,13 +145,15 @@ while True:
         alvo = ex2in[alvo]
 
     e = random.randint(0, 30)
-
     co = random.randint(0, 1)
+    vantagens_de_terreno = [0.8, 1, 1.2]
+    vta = vantagens_de_terreno[random.randint(0, 2)]
+    vtd = vantagens_de_terreno[random.randint(0, 2)]
 
     if co == 1:
-        confronto(atacante, EX_1, ex1in, alvo, EX_2, ex2in, 1, e)
+        confronto(atacante, EX_1, ex1in, alvo, EX_2, ex2in, vta, vtd, e)
     else:
-        confronto(alvo, EX_2, ex2in, atacante, EX_1, ex1in, 1, e)
+        confronto(alvo, EX_2, ex2in, atacante, EX_1, ex1in, vtd, vta, e)
 
     if EX_1[atacante["classe"]]["quant"] <= 0:
         EX_1.pop(atacante["classe"])
@@ -166,3 +169,18 @@ while True:
         break
 
 
+print("No ex1 sobraram:")
+print(EX_1["dinossauro"]["quant"], "dinossauros")
+print(EX_1["galinha"]["quant"], "galinhas")
+print(EX_1["arqueiro"]["quant"], "arqueiros")
+print(EX_1["lobo"]["quant"], "lobos")
+print(EX_1["águia"]["quant"], "águias")
+print(EX_1["estilingue"]["quant"], "estilingues")
+
+print("No ex2 sobraram:")
+print(EX_2["dinossauro"]["quant"], "dinossauros")
+print(EX_2["galinha"]["quant"], "galinhas")
+print(EX_2["arqueiro"]["quant"], "arqueiros")
+print(EX_2["lobo"]["quant"], "lobos")
+print(EX_2["águia"]["quant"], "águias")
+print(EX_2["estilingue"]["quant"], "estilingues")
