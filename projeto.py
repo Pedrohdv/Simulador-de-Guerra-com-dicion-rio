@@ -5,6 +5,7 @@ import sys
 sys.setrecursionlimit(10**6)
 
 atributos_unidades = {
+
     "unit_1": {"classe": "dinossauro", "vida": 500, "vidamax": 500, "ataque": 200, "defesa": 45,
                "agilidade": 1, "distancia_preferida": "perto"},
     "unit_2": {"classe": "galinha", "vida": 50, "vidamax": 50, "ataque": 5, "defesa": 10,
@@ -17,14 +18,15 @@ atributos_unidades = {
                "agilidade": 10, "distancia_preferida": "perto"},
     "unit_6": {"classe": "estilingue", "vida": 200, "vidamax": 200, "ataque": 75, "defesa": 15,
                "agilidade": 7, "distancia_preferida": "longe"}
+
 }
 #define atributos
 
 vantagens_de_classe = {
     "águia": {"dinossauro": 1.2, "lobo": 1.2},
     "arqueiro": {"águia": 1.2, "galinha": 1.2},
-    "estilingue": {"águia": 1.2, "galinha": 1.2},
-    "lobo": {"arqueiro": 1.2, "estilingue": 1.2}
+    "hobbit": {"águia": 1.2, "galinha": 1.2},
+    "lobo": {"arqueiro": 1.2, "hobbit": 1.2}
 }
 #define multiplicadores de vantagem que uma classe tem em outra
 
